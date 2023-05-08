@@ -1,31 +1,7 @@
-import { TennisGame } from './TennisGame';
+import {TennisGame} from './TennisGame';
 import Player from './Player';
 
-enum equalScore {
-  love = "Love-All",
-  fifteen = "Fifteen-All",
-  thirty = "Thirty-All",
-  deuce = "Deuce"
-}
-
-enum advantage {
-  firstPlayer = "Advantage player1",
-  secondPlayer = "Advantage player2"
-}
-
-enum win {
-  firstPlayer = "Win for player1",
-  secondPlayer = "Win for player2"
-}
-
-enum gameSituations {
-  love = "Love",
-  fifteen = "Fifteen",
-  thirty = "Thirty",
-  forty = "Forty"
-}
-
-
+import { constants } from './constants';
 
 export class TennisGame1 implements TennisGame {
   private player1: Player;
@@ -43,77 +19,42 @@ export class TennisGame1 implements TennisGame {
       this.player2.wonPoint();
   }
 
-  defineScore(): string {
-    let score: string;
-    switch (this.player1.getScore()) {
-      case 0:
-        score = equalScore.love;
-        break;
-      case 1:
-        score = equalScore.fifteen;
-        break;
-      case 2:
-        score = equalScore.thirty;
-        break;
-      default:
-        score = equalScore.deuce;
-        break;
-    }
-    return score
+  defineEqualScore(playerScore: number): string {
+    switch (playerScore) {
+        case 0:
+          return constants[0] + '-All';
+        case 1:
+          return constants[1] + '-All';
+        case 2:
+          return constants[2] + '-All';
+        default:
+          return 'Deuce';
+      }
   }
 
   defineWinOrAdvantage(): string {
-    let score: string;
     if (this.player1.hasAdvantageOver(this.player2)) {
-      score = advantage.firstPlayer;
+      return `Advantage ${this.player1.getName()}`;
     } else if (this.player2.hasAdvantageOver(this.player1)) {
-      score = advantage.secondPlayer;
+      return `Advantage ${this.player2.getName()}`;
     } else if (this.player1.hasWonAgainst(this.player2)) {
-      score = win.firstPlayer;
+      return `Win for ${this.player1.getName()}`;
     } else {
-      score = win.secondPlayer;
+      return `Win for ${this.player2.getName()}`;
     }
-    return score;
   }
 
   defineGameSituation(): string {
-    let score: string = '';
-    let tempScore: number = this.player1.getScore();
-    for (let i = 1; i < 3; i++) {
-      if (i !== 1) {
-        score += '-';
-        tempScore = this.player2.getScore();
-      }
-
-      switch (tempScore) {
-        case 0:
-          score += gameSituations.love;
-          break;
-        case 1:
-          score += gameSituations.fifteen;
-          break;
-        case 2:
-          score += gameSituations.thirty;
-          break;
-        case 3:
-          score += gameSituations.forty;
-          break;
-      }
-    }
-
-    return score;
+    return constants[this.player1.getScore()] + "-" + constants[this.player2.getScore()]
   }
 
   getScore(): string {
-    let score: string = '';
-
     if (this.player1.isItEqualScore(this.player2)) {
-      score = this.defineScore();
+      return this.defineEqualScore(this.player1.getScore());
     } else if (this.player1.getScore() >= 4 || this.player2.getScore() >= 4) {
-      score = this.defineWinOrAdvantage();
+      return this.defineWinOrAdvantage();
     } else {
-      score = this.defineGameSituation();
+      return this.defineGameSituation();
     }
-    return score;
   }
 }
