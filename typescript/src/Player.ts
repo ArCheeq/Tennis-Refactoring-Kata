@@ -1,3 +1,5 @@
+
+
 class Player {
     private name: string;
     private score: number;
@@ -37,3 +39,5 @@ class Player {
         return this.score === otherPlayer.getScore();
     }
 }
+
+export default Player;
