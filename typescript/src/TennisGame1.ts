@@ -1,6 +1,32 @@
 import { TennisGame } from './TennisGame';
 import Player from './Player';
 
+enum equalScore {
+  love = "Love-All",
+  fifteen = "Fifteen-All",
+  thirty = "Thirty-All",
+  deuce = "Deuce"
+}
+
+enum advantage {
+  firstPlayer = "Advantage player1",
+  secondPlayer = "Advantage player2"
+}
+
+enum win {
+  firstPlayer = "Win for player1",
+  secondPlayer = "Win for player2"
+}
+
+enum gameSituations {
+  love = "Love",
+  fifteen = "Fifteen",
+  thirty = "Thirty",
+  forty = "Forty"
+}
+
+
+
 export class TennisGame1 implements TennisGame {
   private player1: Player;
   private player2: Player;
@@ -21,16 +47,16 @@ export class TennisGame1 implements TennisGame {
     let score: string;
     switch (this.player1.getScore()) {
       case 0:
-        score = 'Love-All';
+        score = equalScore.love;
         break;
       case 1:
-        score = 'Fifteen-All';
+        score = equalScore.fifteen;
         break;
       case 2:
-        score = 'Thirty-All';
+        score = equalScore.thirty;
         break;
       default:
-        score = 'Deuce';
+        score = equalScore.deuce;
         break;
     }
     return score
@@ -39,18 +65,18 @@ export class TennisGame1 implements TennisGame {
   defineWinOrAdvantage(): string {
     let score: string;
     if (this.player1.hasAdvantageOver(this.player2)) {
-      score = 'Advantage player1';
+      score = advantage.firstPlayer;
     } else if (this.player2.hasAdvantageOver(this.player1)) {
-      score = 'Advantage player2';
+      score = advantage.secondPlayer;
     } else if (this.player1.hasWonAgainst(this.player2)) {
-      score = 'Win for player1';
+      score = win.firstPlayer;
     } else {
-      score = 'Win for player2';
+      score = win.secondPlayer;
     }
     return score;
   }
 
-  definGameSituation(): string {
+  defineGameSituation(): string {
     let score: string = '';
     let tempScore: number = this.player1.getScore();
     for (let i = 1; i < 3; i++) {
@@ -58,19 +84,19 @@ export class TennisGame1 implements TennisGame {
         score += '-';
         tempScore = this.player2.getScore();
       }
-      
+
       switch (tempScore) {
         case 0:
-          score += 'Love';
+          score += gameSituations.love;
           break;
         case 1:
-          score += 'Fifteen';
+          score += gameSituations.fifteen;
           break;
         case 2:
-          score += 'Thirty';
+          score += gameSituations.thirty;
           break;
         case 3:
-          score += 'Forty';
+          score += gameSituations.forty;
           break;
       }
     }
@@ -86,7 +112,7 @@ export class TennisGame1 implements TennisGame {
     } else if (this.player1.getScore() >= 4 || this.player2.getScore() >= 4) {
       score = this.defineWinOrAdvantage();
     } else {
-      score = this.definGameSituation();
+      score = this.defineGameSituation();
     }
     return score;
   }
