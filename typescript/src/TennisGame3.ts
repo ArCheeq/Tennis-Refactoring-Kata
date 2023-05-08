@@ -1,34 +1,60 @@
-import { TennisGame } from './TennisGame';
+import { TennisGame } from "./TennisGame";
+
+import Player from "./Player";
+import { constants } from "./constants";
 
 export class TennisGame3 implements TennisGame {
-  private p2: number = 0;
-  private p1: number = 0;
-  private p1N: string;
-  private p2N: string;
+  private player1: Player;
+  private player2: Player;
 
-  constructor(p1N: string, p2N: string) {
-    this.p1N = p1N;
-    this.p2N = p2N;
-  }
-
-  getScore(): string {
-    let s: string;
-    if (this.p1 < 4 && this.p2 < 4 && !(this.p1 + this.p2 === 6)) {
-      const p: string[] = ['Love', 'Fifteen', 'Thirty', 'Forty'];
-      s = p[this.p1];
-      return (this.p1 === this.p2) ? s + '-All' : s + '-' + p[this.p2];
-    } else {
-      if (this.p1 === this.p2)
-        return 'Deuce';
-      s = this.p1 > this.p2 ? this.p1N : this.p2N;
-      return (((this.p1 - this.p2) * (this.p1 - this.p2)) === 1) ? 'Advantage ' + s : 'Win for ' + s;
-    }
+  constructor(player1Name: string, player2Name: string) {
+    this.player1 = new Player(player1Name);
+    this.player2 = new Player(player2Name);
   }
 
   wonPoint(playerName: string): void {
-    if (playerName === 'player1')
-      this.p1 += 1;
+    if (this.player1.isCalled(playerName))
+      this.player1.wonPoint();
     else
-      this.p2 += 1;
+      this.player2.wonPoint();
+  }
+
+  defineEqualScore(playerScore: number): string {
+    switch (playerScore) {
+        case 0:
+          return constants[0] + '-All';
+        case 1:
+          return constants[1] + '-All';
+        case 2:
+          return constants[2] + '-All';
+        default:
+          return 'Deuce';
+      }
+  }
+
+  defineWinOrAdvantage(): string {
+    if (this.player1.hasAdvantageOver(this.player2)) {
+      return `Advantage ${this.player1.getName()}`;
+    } else if (this.player2.hasAdvantageOver(this.player1)) {
+      return `Advantage ${this.player2.getName()}`;
+    } else if (this.player1.hasWonAgainst(this.player2)) {
+      return `Win for ${this.player1.getName()}`;
+    } else {
+      return `Win for ${this.player2.getName()}`;
+    }
+  }
+
+  defineGameSituation(): string {
+    return constants[this.player1.getScore()] + "-" + constants[this.player2.getScore()]
+  }
+
+  getScore(): string {
+    if (this.player1.isItEqualScore(this.player2)) {
+      return this.defineEqualScore(this.player1.getScore());
+    } else if (this.player1.getScore() >= 4 || this.player2.getScore() >= 4) {
+      return this.defineWinOrAdvantage();
+    } else {
+      return this.defineGameSituation();
+    }
   }
 }
